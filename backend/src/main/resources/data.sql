@@ -1,1 +1,1 @@
-INSERT INTO example.greetings(name) values ('Docker');
+INSERT INTO example.greetings(name) values ('Tenable');
