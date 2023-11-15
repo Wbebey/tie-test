@@ -16,12 +16,13 @@ defaults:
     working-directory: "frontend"
 
 env:
+  PROJECT_DIRECTORY: frontend
   DOCKER_BUILDKIT: 1
   DOCKERFILE: Dockerfile.production
   DOCKER_TAG: ${{ secrets.DOCKER_TAG_FRONTEND }}
   DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
   DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-  PROJECT_DIRECTORY: frontend
+  DOPPLER_TOKEN: ${{ secrets.DOPPLER_FRONTEND_TOKEN }}
   FRONTEND_URL: ${{ secrets.FRONTEND_URL }}
 
 jobs:
