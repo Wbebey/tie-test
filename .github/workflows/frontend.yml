@@ -36,8 +36,15 @@ jobs:
     - name: Checkout 😇
       uses: actions/checkout@v3
 
-    - name: Build & push Docker image 🏗
+    - name: Build 🏗
       uses: ./.github/actions/docker/build
+
+  publish:
+    name: Publish 🏗
+    runs-on: ubuntu-latest
+    steps:
+    - name: Push 🏗
+      uses: ./.github/actions/docker/push
 
   # deploy:
   #   name: Deployment 🚀

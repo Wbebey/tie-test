@@ -1,5 +1,5 @@
-name: "Build & push Docker image 🏗"
-description: "Build & push Docker image"
+name: "Build 🏗"
+description: "Build docker image"
 runs:
     using: composite
     steps:
@@ -14,12 +14,3 @@ runs:
             --build-arg ENV_NAME=${{ env.ENV_NAME }} \
             -t ${{ env.DOCKER_TAG }}:latest \
             -t ${{ env.DOCKER_TAG }}:${{ github.sha }} 
-
-      - name: Publish to Docker Hub 🛫
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ env.DOCKER_TAG }}:latest, ${{ env.DOCKER_TAG }}:${{ github.sha }}
-          tags: latest, ${{ github.sha }}
-        env:
-          DOCKER_USERNAME: ${{ env.DOCKER_USERNAME }}
-          DOCKER_PASSWORD: ${{ env.DOCKER_PASSWORD }}
