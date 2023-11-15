@@ -29,26 +29,15 @@ env:
 
 jobs:
   build:
-    name: Build 🏗
+    name: Build & publish 🏗
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout 😇
       uses: actions/checkout@v3
 
-    - name: Build 🏗
+    - name: Build & publish 🏗
       uses: ./.github/actions/docker/build
-
-  publish:
-    name: Publish 🏗
-    runs-on: ubuntu-latest
-    needs: [build]
-    steps:
-    - name: Checkout 😇
-      uses: actions/checkout@v3
-
-    - name: Push 🏗
-      uses: ./.github/actions/docker/push
 
   # deploy:
   #   name: Deployment 🚀
