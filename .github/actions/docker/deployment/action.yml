@@ -1,0 +1,47 @@
+name: "Deploy to cloud run 🚀"
+description: "Deploy to cloud run 🚀"
+runs:
+    using: composite
+    steps:
+      - name: GCP authentication 🤑
+        uses: google-github-actions/setup-gcloud@v0
+        with:
+          service_account_key: ${{ env.GCP_SA_KEY }}
+          project_id: ${{ env.GCP_PROJECT_ID }}
+
+      - name: Build 🏗
+        working-directory:  ${{ env.PROJECT_DIRECTORY }}
+        shell: bash
+        run: |-
+          docker build . \
+            -f ${{ GITHUB.WORKSPACE }}/${{ env.PROJECT_DIRECTORY }}/${{ env.DOCKERFILE }} \
+            --build-arg DOPPLER_TOKEN=${{ DOPPLER_TOKEN }} \
+            --build-arg APP=${{ env.APP }} \
+            --build-arg ENV_NAME=${{ env.ENV_NAME }} \
+            -t $${{ env.DOCKER_TAG }}:latest \
+            -t ${{ env.DOCKER_TAG }}:${{ github.sha }} 
+
+      - name: Publish to Docker Hub 🛫
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.DOCKER_TAG }}:latest, ${{ env.DOCKER_TAG }}:${{ github.sha }}
+          tags: latest, ${{ github.sha }}
+        env:
+          DOCKER_USERNAME: ${{ env.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ env.DOCKER_PASSWORD }}
+
+      - name: Deploy 🚀
+        working-directory:  ${{ env.PROJECT_DIRECTORY }}
+        shell: bash
+        run: |-
+          echo "Deploying image ${{ env.DOCKER_TAG }}:latest to google cloud run on environment $ENVIRONMENT"
+          gcloud run deploy ${{ env.APP }}-$ENVIRONMENT \
+            --image ${{ env.DOCKER_TAG }}:${{ github.sha }} \
+            --platform managed \
+            --region europe-west1 \
+            --allow-unauthenticated \
+            --cpu 1000m \
+            --memory 512Mi \
+            --timeout 300 \
+            --max-instances 1 \
+            --project ${{ env.GCP_PROJECT_ID }}

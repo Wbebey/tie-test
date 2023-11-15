@@ -1,0 +1,91 @@
+# syntax=docker/dockerfile:1.4
+
+# Development stage
+FROM node:lts AS development
+
+WORKDIR /code
+
+# Set environment variables
+ENV NODE_ENV=development
+ENV CI=true
+ENV PORT=3000
+
+# Copy package files and install dependencies
+COPY package*.json /code/
+RUN npm ci
+
+# Copy the rest of the code
+COPY . /code/
+
+# Start the development server
+CMD [ "npm", "start" ]
+
+# # Development environment stage
+# FROM development AS dev-envs
+
+# # Install git and add vscode user
+# RUN apt-get update \
+#   && apt-get install -y git \
+#   && apt-get clean \
+#   && useradd -s /bin/bash -m vscode \
+#   && groupadd docker \
+#   && usermod -aG docker vscode
+
+# # Install Docker tools (cli, buildx, compose)
+# COPY --from=gloursdocker/docker / /
+
+# Build stage
+FROM development AS build
+
+ARG DOPPLER_TOKEN
+ARG APP
+ARG ENV_NAME
+
+ENV APP=${APP}
+ENV DOPPLER_TOKEN=${DOPPLER_TOKEN}
+ENV ENV_NAME=${ENV_NAME}
+ENV HISTIGNORE='doppler*'
+
+# Install Doppler CLI
+RUN apt-get update && apt-get install -y apt-transport-https ca-certificates curl gnupg && \
+    curl -sLf --retry 3 --tlsv1.2 --proto "=https" 'https://packages.doppler.com/public/cli/gpg.DE2A7741A397C129.key' | apt-key add - && \
+    echo "deb https://packages.doppler.com/public/cli/deb/debian any-version main" | tee /etc/apt/sources.list.d/doppler-cli.list && \
+    apt-get update && \
+    apt-get -y install doppler -y && \
+    apt-get clean
+
+RUN doppler setup --token ${DOPPLER_TOKEN} \
+    --project ${APP} \
+    --config ${ENV_NAME} \
+    --no-interactive
+
+# Build the production-ready code
+RUN ["doppler", "run", "--", "npm", "run", "build"]
+
+# Production stage
+FROM nginx:1.13-alpine AS production
+
+# Copy the production-ready code to the nginx server
+COPY --from=build /code/build /usr/share/nginx/html
+
+# # Set security context for nginx
+# RUN chown -R nginx:nginx /usr/share/nginx/html && \
+#   chmod -R 755 /usr/share/nginx/html
+
+# # Set container security context
+# RUN chown -R nginx:nginx /var/cache/nginx && \
+#   chown -R nginx:nginx /var/log/nginx && \
+#   chown -R nginx:nginx /var/run && \
+#   chown -R nginx:nginx /etc/nginx/conf.d && \
+#   chmod -R 755 /var/cache/nginx && \
+#   chmod -R 755 /var/log/nginx && \
+#   chmod -R 755 /var/run && \
+#   chmod -R 755 /etc/nginx/conf.d  && \
+#   touch /var/run/nginx.pid && \
+#   chmod -R 755 /var/run/nginx.pid
+
+# # Drop privileges
+# USER nginx
+
+# Expose port 80
+# EXPOSE 8080

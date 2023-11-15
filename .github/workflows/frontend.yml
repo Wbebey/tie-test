@@ -1,0 +1,52 @@
+name: Frontend Deployment
+
+on:
+  push:
+    # paths:
+    #   - "frontend/**"
+  workflow_dispatch:
+    inputs:
+      paths:
+        description: "Path to frontend code"
+        required: true
+        default: "frontend/**"
+
+defaults:
+  run:
+    working-directory: "frontend"
+
+env:
+  DOCKER_BUILDKIT: 1
+  DOCKERFILE: Dockerfile.production
+  DOCKER_TAG: ${{ secrets.DOCKER_TAG_FRONTEND }}
+  DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+  DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+  PROJECT_DIRECTORY: frontend
+  FRONTEND_URL: ${{ secrets.FRONTEND_URL }}
+
+jobs:
+  build:
+    name: Build 🏗
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout 😇
+      uses: actions/checkout@v3
+
+    - name: Build & push Docker image 🏗
+      uses: ./.github/actions/docker/build
+
+  # deploy:
+  #   name: Deployment 🚀
+  #   runs-on: ubuntu-latest
+  #   needs: [build]
+  #   concurrency: production
+  #   environment:
+  #     name: production
+  #     url: ${{ env.FRONTEND_URL }}
+  #   steps:
+  #       - name: Checkout 😇
+  #         uses: actions/checkout@v3
+
+  #       - name: Build Application 🧪
+  #         uses: ./.github/actions/backend/build

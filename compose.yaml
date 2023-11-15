@@ -1,14 +1,16 @@
 services:
   backend:
     build: backend
-    restart: always
+    restart: always    
+    ports:
+      - 8080:8080
     secrets:
       - db-password
     environment:
       MYSQL_HOST: db
-    networks:
-      - react-spring
-      - spring-mysql
+    # networks:
+    #   - react-spring
+    #   - spring-mysql
     depends_on:
       db:
         condition: service_healthy
@@ -31,8 +33,8 @@ services:
       - db-password
     volumes:
       - db-data:/var/lib/mysql
-    networks:
-      - spring-mysql
+    # networks:
+    #   - spring-mysql
 
   frontend:
     build:
@@ -43,8 +45,8 @@ services:
     volumes:
       - ./frontend/src:/code/src
       - /project/node_modules
-    networks:
-      - react-spring
+    # networks:
+    #   - react-spring
     depends_on:
       - backend
     expose:
@@ -58,6 +60,6 @@ secrets:
   db-password:
     file: db/password.txt
 
-networks:
-  react-spring: {}
-  spring-mysql: {}
+# networks:
+#   react-spring: {}
+#   spring-mysql: {}

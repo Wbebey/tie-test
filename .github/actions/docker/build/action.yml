@@ -1,0 +1,25 @@
+name: "Build & push Docker image 🏗"
+description: "Build & push Docker image"
+runs:
+    using: composite
+    steps:
+      - name: Build 🏗
+        working-directory:  ${{ env.PROJECT_DIRECTORY }}
+        shell: bash
+        run: |-
+          docker build . \
+            -f ${{ GITHUB.WORKSPACE }}/${{ env.PROJECT_DIRECTORY }}/${{ env.DOCKERFILE }} \
+            --build-arg DOPPLER_TOKEN=${{ DOPPLER_TOKEN }} \
+            --build-arg APP=${{ env.APP }} \
+            --build-arg ENV_NAME=${{ env.ENV_NAME }} \
+            -t $${{ env.DOCKER_TAG }}:latest \
+            -t ${{ env.DOCKER_TAG }}:${{ github.sha }} 
+
+      - name: Publish to Docker Hub 🛫
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.DOCKER_TAG }}:latest, ${{ env.DOCKER_TAG }}:${{ github.sha }}
+          tags: latest, ${{ github.sha }}
+        env:
+          DOCKER_USERNAME: ${{ env.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ env.DOCKER_PASSWORD }}
