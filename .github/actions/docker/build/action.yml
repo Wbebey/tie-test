@@ -12,7 +12,7 @@ runs:
             --build-arg DOPPLER_TOKEN=${{ env.DOPPLER_TOKEN }} \
             --build-arg APP=${{ env.APP }} \
             --build-arg ENV_NAME=${{ env.ENV_NAME }} \
-            -t $${{ env.DOCKER_TAG }}:latest \
+            -t ${{ env.DOCKER_TAG }}:latest \
             -t ${{ env.DOCKER_TAG }}:${{ github.sha }} 
 
       - name: Publish to Docker Hub 🛫

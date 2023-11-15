@@ -15,10 +15,10 @@ runs:
         run: |-
           docker build . \
             -f ${{ GITHUB.WORKSPACE }}/${{ env.PROJECT_DIRECTORY }}/${{ env.DOCKERFILE }} \
-            --build-arg DOPPLER_TOKEN=${{ DOPPLER_TOKEN }} \
+            --build-arg DOPPLER_TOKEN=${{ env.DOPPLER_TOKEN }} \
             --build-arg APP=${{ env.APP }} \
             --build-arg ENV_NAME=${{ env.ENV_NAME }} \
-            -t $${{ env.DOCKER_TAG }}:latest \
+            -t ${{ env.DOCKER_TAG }}:latest \
             -t ${{ env.DOCKER_TAG }}:${{ github.sha }} 
 
       - name: Publish to Docker Hub 🛫

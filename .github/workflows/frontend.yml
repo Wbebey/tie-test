@@ -16,6 +16,8 @@ defaults:
     working-directory: "frontend"
 
 env:
+  APP: tenable-front
+  ENV_NAME: prd
   PROJECT_DIRECTORY: frontend
   DOCKER_BUILDKIT: 1
   DOCKERFILE: Dockerfile.production
