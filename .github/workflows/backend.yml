@@ -45,7 +45,7 @@ jobs:
 
     - name: retrieve secrets 🤫
       run: |
-        gcloud secrets versions  access --secret=${{ env.APP }} 1 >>  application.properties
+        gcloud secrets versions  access --secret=${{ env.APP }} 1 > application.properties
         mv application.properties backend/src/main/resources/
 
     - name: Build & publish 🏗
