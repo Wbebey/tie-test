@@ -13,12 +13,11 @@ runs:
         working-directory:  ${{ env.PROJECT_DIRECTORY }}
         shell: bash
         run: |-
-          echo "Deploying image ${{ env.DOCKER_TAG }}:latest to google cloud run on environment $ENVIRONMENT"
-          gcloud run deploy ${{ env.APP }}-$ENVIRONMENT \
+          echo "Deploying image ${{ env.DOCKER_TAG }}:latest to google cloud run"
+          gcloud run deploy ${{ env.APP }} \
             --image ${{ env.DOCKER_TAG }}:${{ github.sha }} \
             --platform managed \
             --region europe-west1 \
-            --allow-unauthenticated \
             --cpu 1000m \
             --memory 512Mi \
             --timeout 300 \

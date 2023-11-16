@@ -26,6 +26,8 @@ env:
   DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
   DOPPLER_TOKEN: ${{ secrets.DOPPLER_FRONTEND_TOKEN }}
   FRONTEND_URL: ${{ secrets.FRONTEND_URL }}
+  GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
 
 jobs:
   build:
@@ -39,17 +41,17 @@ jobs:
     - name: Build & publish 🏗
       uses: ./.github/actions/docker/build
 
-  # deploy:
-  #   name: Deployment 🚀
-  #   runs-on: ubuntu-latest
-  #   needs: [publish]
-  #   concurrency: production
-  #   environment:
-  #     name: production
-  #     url: ${{ env.FRONTEND_URL }}
-  #   steps:
-  #       - name: Checkout 😇
-  #         uses: actions/checkout@v3
+  deploy:
+    name: Deployment 🚀
+    runs-on: ubuntu-latest
+    needs: [build]
+    concurrency: production
+    environment:
+      name: production
+      url: ${{ env.FRONTEND_URL }}
+    steps:
+        - name: Checkout 😇
+          uses: actions/checkout@v3
 
-  #       - name: Build Application 🧪
-  #         uses: ./.github/actions/backend/build
+        - name: Build Application 🧪
+          uses: ./.github/actions/backend/deplyment
