@@ -18,6 +18,7 @@ runs:
             --image ${{ env.DOCKER_TAG }}:${{ github.sha }} \
             --platform managed \
             --region europe-west1 \
+            --allow-unauthenticated \
             --cpu 1000m \
             --memory 512Mi \
             --timeout 300 \

@@ -8,7 +8,7 @@ RUN mvn dependency:go-offline
 COPY src /workdir/server/src
 RUN mvn install
 
-FROM builder as dev-envs
+FROM builder AS dev-envs
 
 RUN <<EOF
 apt-get update
@@ -24,12 +24,12 @@ EOF
 COPY --from=gloursdocker/docker / /
 CMD ["mvn", "spring-boot:run"]
 
-FROM builder as prepare-production
+FROM builder AS prepare-production
 RUN mkdir -p target/dependency
 WORKDIR /workdir/server/target/dependency
 RUN jar -xf ../*.jar
 
-FROM eclipse-temurin:17-jre-focal
+FROM eclipse-temurin:17-jre-focal AS production
 
 EXPOSE 8080
 VOLUME /tmp

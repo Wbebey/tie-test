@@ -18,7 +18,7 @@ resource "google_cloud_run_service" "tenable-back-service" {
     }
 
     annotations = {
-      "run.googleapis.com/ingress" = "internal"
+      "run.googleapis.com/ingress" = "all"
       # limit scale up to prevent any cost blow outs!
       "autoscaling.knative.dev/maxScale" = "2"
       # use the VPC Connector above
@@ -34,11 +34,6 @@ resource "google_cloud_run_service" "tenable-back-service" {
         image = "gcr.io/cloudrun/hello"
         ports {
           container_port = 8080
-        }
-        liveness_probe {
-          http_get {
-            path = "/"
-          }
         }
       }
     }

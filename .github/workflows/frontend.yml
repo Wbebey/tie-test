@@ -2,8 +2,8 @@ name: Frontend Deployment
 
 on:
   push:
-    # paths:
-    #   - "frontend/**"
+    paths:
+      - "frontend/**"
   workflow_dispatch:
     inputs:
       paths:
@@ -53,5 +53,5 @@ jobs:
         - name: Checkout 😇
           uses: actions/checkout@v3
 
-        - name: Build Application 🧪
+        - name: Deploy Application 🚀
           uses: ./.github/actions/docker/deployment

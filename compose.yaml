@@ -4,10 +4,10 @@ services:
     restart: always    
     ports:
       - 8080:8080
-    secrets:
-      - db-password
-    environment:
-      MYSQL_HOST: db
+    # secrets:
+    #   - db-password
+    # environment:
+    #   MYSQL_HOST: db
     # networks:
     #   - react-spring
     #   - spring-mysql

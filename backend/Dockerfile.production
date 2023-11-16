@@ -1,0 +1,31 @@
+# syntax=docker/dockerfile:1.4
+
+FROM maven:3.8.5-eclipse-temurin-17 AS build
+
+WORKDIR /app
+
+COPY pom.xml .
+
+COPY src ./src
+
+RUN mvn clean package -DskipTests
+
+FROM openjdk:17-jdk-alpine AS production
+
+WORKDIR /app
+
+ENV SERVER_PORT=8080
+ENV SPRING_PROFILES_ACTIVE=production
+ENV JAVA_OPTS="-Xms512m -Xmx512m -XX:MaxMetaspaceSize=256m"
+
+# Set a non-root user to run the application
+RUN addgroup -S appgroup && adduser -S tenable -G appgroup
+
+USER tenable
+
+COPY --from=build /app/target/*.jar /app/app.jar
+
+# Set the Java thread and core
+EXPOSE 8080
+
+ENTRYPOINT ["java", "-jar", "/app/app.jar"]
