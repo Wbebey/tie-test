@@ -62,8 +62,16 @@ RUN doppler setup --token ${DOPPLER_TOKEN} \
 # Build the production-ready code
 RUN ["doppler", "run", "--", "npm", "run", "build"]
 
+RUN npm run build
+
 # Production stage
 FROM nginx:1.13-alpine AS production
+
+# Copy your custom nginx.conf 
+COPY nginx/nginx.conf /etc/nginx/nginx.conf
+
+# Copy your custom default.conf 
+COPY nginx/default.conf /etc/nginx/conf.d/default.conf
 
 # Copy the production-ready code to the nginx server
 COPY --from=build /code/build /usr/share/nginx/html

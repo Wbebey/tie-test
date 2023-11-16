@@ -2,8 +2,8 @@ name: Frontend Deployment
 
 on:
   push:
-    paths:
-      - "frontend/**"
+    # paths:
+    #   - "frontend/**"
   workflow_dispatch:
     inputs:
       paths:
