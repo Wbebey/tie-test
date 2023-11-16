@@ -31,7 +31,7 @@ resource "google_cloud_run_service" "tenable-back-service" {
   template {
     spec {
       containers {
-        image = "gcr.io/cloudrun/hello"
+        image = "wbarmis/tenable-back:latest"
         ports {
           container_port = 8080
         }
