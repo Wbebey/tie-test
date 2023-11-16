@@ -78,7 +78,7 @@ resource "google_cloud_run_service" "tenable-front-service" {
         image = "wbarmis/tenable-front:latest"
 
         ports {
-          container_port = 80
+          container_port = 443
         }
       }
     }
